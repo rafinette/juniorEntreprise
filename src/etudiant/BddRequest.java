@@ -134,8 +134,22 @@ public boolean ConventionExist(int conv)
         
     }
 
-public void acompteInsertion(){
-    
+public void acompteInsertion(int login, int idEtude , double ddeacompte){
+
+String query;
+// il faut récupérer le dernier numéro d 'acompte dans la Bdd
+query = "SELECT IDENT_CURRENT(‘acompte’)";
+query = "insert into acompte values (numac,idEtude,login,ddeacompte,"en attente")";
+   
+ /*INSERT INTO "nom de table" ("colonne 1", "colonne 2", ...)
+VALUES ("valeur 1", "valeur 2", ...)   
+insert into acompte values (1,1,1,200, ‘validé’) ;
+(numacom,id_etude,numetu,montantacom,etat)
+*/
+
+     
+        
+        
 }
 
 
@@ -207,7 +221,7 @@ return retour;
 
 }
 
-public boolean pourcentageAcompteEtudiant (String login, int idEtude, double ddeAcompte)
+public boolean pourcentageAcompteEtudiant (int login, int idEtude, double ddeAcompte)
 {
     boolean retour=false;
     

@@ -142,6 +142,7 @@ public class DemandeAcompte extends javax.swing.JFrame {
     BddRequest r2 = new BddRequest();
     int numEtu = Integer.parseInt(login);
     int ie = Integer.parseInt(c);
+    double ac = Double.parseDouble(a);
 
     if (! r1.ConventionExist(ie))
      {
@@ -151,10 +152,10 @@ public class DemandeAcompte extends javax.swing.JFrame {
      }
      else
     {
-        if ( r2.acompteParEtudiant(numEtu,ie))
+        if ( r2.acompteParEtudiant(numEtu,ie)|| r2.pourcentageAcompteEtudiant (numEtu, ie, ac))
         {
-            javax.swing.JOptionPane.showMessageDialog( this, "Demande acceptée",
-        "VALIDATION", javax.swing.JOptionPane.PLAIN_MESSAGE );
+            //javax.swing.JOptionPane.showMessageDialog( this, "Demande acceptée",
+        //"VALIDATION", javax.swing.JOptionPane.PLAIN_MESSAGE );
             
           
         }else
