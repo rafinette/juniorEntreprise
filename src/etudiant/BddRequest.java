@@ -1,12 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package etudiant;
 import java.sql.*;
 /*
  *
- * @author RAFINETTE
+ * Autheurs Rafaèle BONDAZ Mathieu PETINOT
  */
 public class BddRequest {
   
@@ -19,146 +16,179 @@ public boolean etudiantExist (String login)
     BddConnection b= new BddConnection();
     
         try {
-        b.openConnection();
+            b.openConnection();
         } catch (java.sql.SQLException se)
         {
-        se.getMessage();  
+            se.getMessage();  
         }
    
         String query;
-        query = "SELECT numetu FROM etudiants where numetu as login;";
+        query = "SELECT numetu FROM etudiants where numetu = " + login;
         ResultSet results;
         
         try{
        
-        Statement stmt = b.conn.createStatement();
-        results = stmt.executeQuery(query);
-        results.close();
-        stmt.close();
-        
+            Statement stmt = b.conn.createStatement();
+            results = stmt.executeQuery(query);
+            results.next();
+            int numEtu = results.getInt("numetu");
+            results.close();
+            stmt.close();
+            b.closeConnection();
+            if (numEtu > 0)
+            {
+               return true;
+            } else 
+            {
+               return false;
+            }
+          
+            
         }catch(Exception ex)
         {
-            System.out.println("exception du a la requete");
+            System.out.println("exception du a la requete dans etudiantExist");
+            return false;
         }
         
-        try {
-        b.closeConnection();
-        } catch (java.sql.SQLException se)
-        {
-        se.getMessage();  
-        }
-        
-         return true;
        
-     
-    }
-
-public boolean etudiantInEtudExist (int login) 
-{
-    //Etudiants e = new Etudiants(login);
-    BddConnection b= new BddConnection();
-    Etude et = new Etude ();
-    
-        try {
-        b.openConnection();
-        } catch (java.sql.SQLException se)
-        {
-        se.getMessage();  
-        }
-   
-        String query;
-        query = "SELECT numetu FROM etude where numetu = " + login;
-        ResultSet results;
-        
-        try{
-        Statement stmt;
-        stmt = b.conn.createStatement();
-        results = stmt.executeQuery(query);
-        results.close();
-        stmt.close();
-        }catch(Exception ex)
-        {
-            System.out.println("exception du a la requete");
-        }
+           
         
         
-        
-        try {
-        b.closeConnection();
-        } catch (java.sql.SQLException se)
-        {
-        se.getMessage();  
-        }
-        
-         return true;
+         
        
      
     }
 
-public boolean ConventionExist(int conv) 
+public boolean etudiantInEtudExist (int login, int idEtude) 
 {
-    //Convention c = new Convention(conv);
     BddConnection b= new BddConnection();
     
         try {
-        b.openConnection();
+            b.openConnection();
         } catch (java.sql.SQLException se)
         {
-        se.getMessage();  
+            se.getMessage();  
         }
    
-        String query;
         
-        query = "SELECT id_etude FROM etude where id_etude = " + conv;
-        ResultSet results;
         
         try{
-        java.sql.Statement stmt;
-        stmt = b.conn.createStatement();
-        results = stmt.executeQuery(query);
-        results.close();
-        stmt.close();
+            String query;
+            query = "SELECT dureeetude FROM etude where (numetu = " + login + " and  id_etude = " + idEtude + ")";
+            ResultSet results;
+            Statement stmt;
+            stmt = b.conn.createStatement();
+            results = stmt.executeQuery(query);
+            results.next();
+            int duree = results.getInt("dureeetude");
+            results.close();
+            stmt.close();
+            b.closeConnection();
+            
+            if (duree > 0)
+            {
+               return true;
+            } else 
+            {
+               return false;
+            }
+            
+            
         }catch(Exception ex)
         {
-            System.out.println("exception du a la requete");
+            System.out.println("exception du a la requete dans etudiantInEtudExist");
+            return false;
         }
-        
+                       
+         
+       
+     
+    }
+
+public boolean conventionExist(int conv) 
+{
+    BddConnection b= new BddConnection();
+    
         try {
-        b.closeConnection();
+            b.openConnection();
         } catch (java.sql.SQLException se)
         {
-        se.getMessage();  
+            se.getMessage();  
+        }
+   
+        
+        
+        try{
+            String query;
+            query = "SELECT id_etude FROM etude where id_etude = " + conv;
+            ResultSet results;
+            java.sql.Statement stmt;
+            stmt = b.conn.createStatement();
+            results = stmt.executeQuery(query);
+            results.next();
+            int idEtude = results.getInt("id_etude");
+            results.close();
+            stmt.close();
+            b.closeConnection();
+            if (idEtude > 0)
+            {
+               return true;
+            } else 
+            {
+               return false;
+            }
+            
+        }catch(Exception ex)
+        {
+            System.out.println("exception du a la requete dans conventionExist");
+            return false;
         }
         
-         return true;
+         
         
     }
 
 public void acompteInsertion(int login, int idEtude , double ddeacompte){
 
-String query;
-// il faut récupérer le dernier numéro d 'acompte dans la Bdd
-query = "SELECT IDENT_CURRENT(‘acompte’)";
-query = "insert into acompte values (numac,idEtude,login,ddeacompte,"en attente")";
-   
- /*INSERT INTO "nom de table" ("colonne 1", "colonne 2", ...)
-VALUES ("valeur 1", "valeur 2", ...)   
-insert into acompte values (1,1,1,200, ‘validé’) ;
-(numacom,id_etude,numetu,montantacom,etat)
-*/
+    BddConnection b= new BddConnection();
+    
+    try {
+        b.openConnection();
+    } catch (java.sql.SQLException se){
+        se.getMessage();  
+    }
+    
+    try{
+        String query;
+        // il faut récupérer le dernier numéro d 'acompte dans la Bdd
+        //query = "SELECT IDENT_CURRENT(‘ACOMPTE’)";
+        query = "SELECT MAX(NUMACOM) FROM ACOMPTE"; 
+        Statement stmt = b.conn.createStatement();
+        ResultSet results = stmt.executeQuery(query);
+        results.next();
+        int numac = results.getInt(1);
+        numac++;
+        results.close();
+        stmt.close();
+    
+        query = "insert into acompte values ("+ numac + ", " + idEtude + ", " + login + ", " + ddeacompte + ", 'en attente' )";
 
-     
-        
-        
+        stmt = b.conn.createStatement();
+        results = stmt.executeQuery(query);
+        results.close();
+        stmt.close();
+        b.closeConnection();
+    
+    }catch(Exception ex){
+        System.out.println("exception du a la requete dans acompteInsertion" + ex.getMessage());
+    }
 }
 
 
 public boolean acompteParEtudiant (int login, int idEtude)
-{
-    boolean retour = true;
-    
+{ 
     try {
-
+        boolean retour = true;
         BddConnection b =new BddConnection();
         b.openConnection();
 
@@ -166,23 +196,6 @@ public boolean acompteParEtudiant (int login, int idEtude)
         String query;
         query = "SELECT count (*) AS rowcount FROM acompte where (numetu = " + login + " and  id_etude = " + idEtude + ")";
 
-        /*
-        rs = stm.executeQuery("SELECT count(*) AS nbLignes FROM contact ");
-        int nbLignes=0;
-        rs.next();
-        nbLignes = rs.getInt("nbLignes");
-
-        * ou
-
-        Statement s = conn.createStatement( ResultSet.TYPE_SCROLL_INSENSITIVE, 
-        ResultSet.CONCUR_READ_ONLY);
-        ResultSet r = s.executeQuery
-        ("SELECT * FROM employee WHERE id_emp LIKE '1%'");
-        r.last();
-        int count = r.getRow();
-
-        */    
-        
        
         Statement stmt = b.conn.createStatement();
         ResultSet results = stmt.executeQuery(query);
@@ -190,19 +203,11 @@ public boolean acompteParEtudiant (int login, int idEtude)
         int count = results.getInt("rowcount") ;
         results.close() ;
         
-        
-        //results.next();
-        
-        //count = count + results.getRow(); 
-       
-        //********PROBLEME DE REQUETE*************
-        
-
         results.close();
         stmt.close();
         b.closeConnection();
         
-        
+        System.out.println("count vaut:" + count);
 
         if (count < 3)
             {
@@ -212,12 +217,13 @@ public boolean acompteParEtudiant (int login, int idEtude)
                retour = false;
             }
 
+        return retour; 
    } catch(Exception ex)
         {
-                System.out.println("exception du a la requete" + ex.getMessage());
+                System.out.println("exception du a la requete dans acompteParEtudiant" + ex.getMessage());
         }  
-  
-return retour; 
+
+return false;
 
 }
 
@@ -227,7 +233,7 @@ public boolean pourcentageAcompteEtudiant (int login, int idEtude, double ddeAco
     
     try {
 
-        BddConnection b =new BddConnection();
+        BddConnection b = new BddConnection();
         b.openConnection();
 
 
@@ -243,11 +249,11 @@ public boolean pourcentageAcompteEtudiant (int login, int idEtude, double ddeAco
         results.close();
         stmt.close();
         
-        query = "SELECT dureeetude, prixJour FROM etude where (numetu = " + login + " and  idetude = " + idEtude + ")";
+        query = "SELECT dureeetude, prixJour FROM etude where (numetu = " + login + " and  id_etude = " + idEtude + ")";
         double salaire;
         stmt = b.conn.createStatement();
         results = stmt.executeQuery(query);
-        results.last();
+        results.next();
         int duree = results.getInt("dureeetude");
         double tarif = results.getDouble("prixjour");
         salaire = duree * tarif;
@@ -255,8 +261,10 @@ public boolean pourcentageAcompteEtudiant (int login, int idEtude, double ddeAco
         stmt.close();
            
         b.closeConnection();
+        Double pourcentage = (montantTotAcom + ddeAcompte)/salaire;
+        System.out.println("pourcentage vaut:" + pourcentage);
         
-        if(((montantTotAcom + ddeAcompte)/salaire) <= 0.8){
+        if(pourcentage <= 0.8){
             retour = true;
         }
 
@@ -265,7 +273,7 @@ public boolean pourcentageAcompteEtudiant (int login, int idEtude, double ddeAco
 
     } catch(Exception ex)
         {
-                System.out.println("exception du a la requete" + ex.getMessage());
+                System.out.println("exception du a la requete dans pourcentageAcompteEtudiant" + ex.getMessage());
         }  
     
     return retour;
